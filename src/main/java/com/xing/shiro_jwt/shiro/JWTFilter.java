@@ -3,6 +3,7 @@ package com.xing.shiro_jwt.shiro;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.xing.shiro_jwt.shiro.JWTToken;
+import com.xing.shiro_jwt.vo.ConstantField;
 import lombok.SneakyThrows;
 import org.apache.logging.log4j.util.PropertiesUtil;
 import org.apache.shiro.SecurityUtils;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -26,58 +28,45 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static final String TOKEN = "Authentication";
-
-    private AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @SneakyThrows
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws UnauthorizedException {
-        try {
-            if (this.isLoginAttempt(request,response)){
-                return executeLogin(request, response);
-            }
-            //认证异常
-        }catch (SignatureVerificationException e){
-
-            //token过期异常
-        }catch (TokenExpiredException e) {
-
-        } catch (Exception e) {
-
+        if (this.isLoginAttempt(request,response)){
+            return executeLogin(request, response);
         }
-        HttpServletResponse httpResponse = WebUtils.toHttp(response);
         return false;
     }
 
+    @SneakyThrows
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
-        String token = httpRequest.getHeader(TOKEN);
+        String token = httpRequest.getHeader(ConstantField.TOKEN);
         return token != null;
     }
 
     @Override
     protected boolean executeLogin(ServletRequest request, ServletResponse response) {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String token = httpServletRequest.getHeader(TOKEN);
-        JWTToken jwtToken = new JWTToken(token);
         try {
+            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+            String token = httpServletRequest.getHeader(ConstantField.TOKEN);
+            JWTToken jwtToken = new JWTToken(token);
             SecurityUtils.getSubject().login(jwtToken);
-            boolean f = SecurityUtils.getSubject().isAuthenticated();
             return true;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return false;
+        }catch (Exception e) {
+            log.error(e.toString());
         }
+        return false;
     }
 
     @Override
-    public boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
+    public boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         httpResponse.setCharacterEncoding("UTF-8");
         httpResponse.setContentType("application/json;charset=UTF-8");
         httpResponse.setStatus(HttpStatus.NON_AUTHORITATIVE_INFORMATION.value());
+        request.getRequestDispatcher("/notToken").forward(request,response);
         return false;
     }
     /**

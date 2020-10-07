@@ -47,6 +47,7 @@ public class ShiroConfig {
         //不拦截注册和登录页面
         filterChainDefinitionMap.put("/login","anon");
         filterChainDefinitionMap.put("/register","anon");
+
         filterChainDefinitionMap.put("/**", "jwt");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);

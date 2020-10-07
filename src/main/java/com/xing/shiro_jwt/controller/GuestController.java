@@ -8,6 +8,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,20 +24,10 @@ import java.util.Map;
 @Api(tags = "游客操作")
 public class GuestController {
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     ShiroService shiroService;
-
-    @ApiOperation("后端处理未登录异常用的")
-    @GetMapping(value = "/notLogin")
-    public JsonResponse notLogin() {
-        return JsonResponse.noLogError();
-    }
-
-    @ApiOperation("后端处理权限异常用的")
-    @GetMapping(value = "/notAdmin")
-    public JsonResponse notAdmin() {
-        return JsonResponse.noAuthority();
-    }
 
     /**
      *  "id":"admin","password":"123456"
@@ -56,13 +48,19 @@ public class GuestController {
         //将token放入响应头
         try {
             JsonResponse jsonResponse = shiroService.login(id,password);
-            String token = (String)jsonResponse.get("token");
-            httpServletResponse.setHeader("Authentication", token);
-            httpServletResponse.setHeader("Access-Control-Expose-Headers", "Authentication");
+
+            String token = (String)jsonResponse.get(ConstantField.TOKEN);
+            jsonResponse.remove(ConstantField.TOKEN);
+
+            httpServletResponse.setHeader(ConstantField.TOKEN, token);
+            httpServletResponse.setHeader("Access-Control-Expose-Headers", ConstantField.TOKEN);
             return jsonResponse;
         } catch (Exception e) {
             //subject.login()和httpServletResponse.setHeader需要同时执行,有异常注销
             Subject subject = SecurityUtils.getSubject();
+
+            log.error(subject.getPrincipal() + "登录成功但生成token异常");
+
             subject.logout();
             return JsonResponse.unknownError("登陆失败！");
         }

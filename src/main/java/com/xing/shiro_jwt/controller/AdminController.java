@@ -6,7 +6,10 @@ import com.xing.shiro_jwt.vo.JsonResponse;
 import com.xing.shiro_jwt.vo.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +23,19 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "管理员操作")
 public class AdminController {
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     ShiroService shiroService;
 
     @PostMapping("/delete")
     @ApiOperation("删除用户")
     public JsonResponse delete(@RequestBody String id) {
-        return shiroService.delete(id);
+        JsonResponse jsonResponse = shiroService.delete(id);
+
+        log.info(SecurityUtils.getSubject().getPrincipal() + "删除" + id);
+
+        return jsonResponse;
     }
 
     @PostMapping("/register")

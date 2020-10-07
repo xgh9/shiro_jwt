@@ -26,7 +26,7 @@ public class TestController {
     }
 
     @GetMapping("admin")
-    @ApiOperation("需要登录")
+    @ApiOperation("需要管理员")
     @RequiresRoles("admin")
     public JsonResponse admin(){
         return JsonResponse.success();

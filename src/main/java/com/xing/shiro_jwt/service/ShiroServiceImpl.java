@@ -11,6 +11,8 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,41 +24,40 @@ import java.util.Collection;
 @Service
 public class ShiroServiceImpl implements ShiroService{
 
+    private Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Resource
     UserMapper userMapper;
 
     @Autowired
     com.xing.shiro_jwt.shiro.DBRealm DBRealm;
 
+    //登录请求不会经过JWTFilter，由于关闭了session，肯定不会发生重复登录的情况
     @Override
     public JsonResponse login(String id, String password) {
         Subject subject = SecurityUtils.getSubject();
-        if (!subject.isAuthenticated()){
-            try{
-                UsernamePasswordToken token = new UsernamePasswordToken(id, password);
-                subject.login(token);
-            }catch (UnknownAccountException e){
-                return JsonResponse.invalidParam("用户名错误");
-            }catch (IncorrectCredentialsException e){
-                return JsonResponse.invalidParam("密码错误");
-            }catch (LockedAccountException lae) {
-                return JsonResponse.invalidParam("账号已锁定");
-            } catch (ExcessiveAttemptsException eae) {
-                return JsonResponse.invalidParam("用户名或密码错误次数过多");
-            } catch (AuthenticationException ae) {
-                return JsonResponse.invalidParam("用户名或密码错误");
-            }
-            if (subject.isAuthenticated()){
-                User user = getUserById((String) subject.getPrincipal());
-                String token = JWTUtils.sign(user);
-                JsonResponse response = JsonResponse.success();
-                response.put("token", token);
-                return response;
-            }else {
-                return JsonResponse.unknownError("登陆失败");
-            }
+        try{
+            UsernamePasswordToken token = new UsernamePasswordToken(id, password);
+            subject.login(token);
+        }catch (UnknownAccountException e){
+            return JsonResponse.invalidParam("用户名错误");
+        }catch (IncorrectCredentialsException e){
+            return JsonResponse.invalidParam("密码错误");
+        }catch (LockedAccountException lae) {
+            return JsonResponse.invalidParam("账号已锁定");
+        } catch (ExcessiveAttemptsException eae) {
+            return JsonResponse.invalidParam("用户名或密码错误次数过多");
+        } catch (AuthenticationException ae) {
+            return JsonResponse.invalidParam("用户名或密码错误");
+        }
+        if (subject.isAuthenticated()){
+            User user = getUserById((String) subject.getPrincipal());
+            String token = JWTUtils.sign(user);
+            JsonResponse response = JsonResponse.success();
+            response.put(ConstantField.TOKEN, token);
+            return response;
         }else {
-            return JsonResponse.repeatLogin((String)subject.getPrincipal());
+            return JsonResponse.unknownError("登陆失败");
         }
     }
 
@@ -71,6 +72,7 @@ public class ShiroServiceImpl implements ShiroService{
         user.setSalt(salt);
         int res = userMapper.insert(user);
         if (res == 0){
+            log.error(user.getId() + "注册失败");
             return JsonResponse.unknownError();
         }
 
@@ -125,7 +127,7 @@ public class ShiroServiceImpl implements ShiroService{
      * 1，未登录时 AuthorizationInfo 和 subject.getPrincipal()都会报空指针异常，要提前判断登陆状态
      * 2，权限缓存Cache<Object, AuthorizationInfo> authorizationCache的key 是 subject.getPrincipals()
      *      subject.getPrincipal() 和  （String）subject.getPrincipal()都获取不到值
-     * 3，bean被静态工具类注入时为null ,解决办法见JsonResponse
+     * 3，bean被静态工具类注入时为null
      * @return
      */
     @Override

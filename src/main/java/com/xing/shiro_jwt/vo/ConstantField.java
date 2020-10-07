@@ -10,4 +10,6 @@ public class ConstantField {
     public static String PASSWORD = "password";
 
     public static String OLD_PASSWORD = "oldPassword";
+
+    public static String TOKEN = "Authentication";
 }

@@ -84,10 +84,18 @@ public class JsonResponse extends HashMap<String,Object>{
         return jsonResponse;
     }
 
-    public static JsonResponse repeatLogin(String username){
+    public static JsonResponse tokenError(){
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,4);
-        jsonResponse.put(ERROR_MSG,"用户"+ username + "已登录，若要切换用户请先退出");
+        jsonResponse.put(ERROR_MSG,"token认证失败");
+        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        return jsonResponse;
+    }
+
+    public static JsonResponse tokenError(String msg){
+        JsonResponse jsonResponse = new JsonResponse();
+        jsonResponse.put(ERROR_CODE,4);
+        jsonResponse.put(ERROR_MSG,msg);
         jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
         return jsonResponse;
     }
