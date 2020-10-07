@@ -1,6 +1,6 @@
 package com.xing.shiro_jwt.controller;
 
-import com.xing.shiro_jwt.config.JWTToken;
+import com.xing.shiro_jwt.shiro.JWTToken;
 import com.xing.shiro_jwt.vo.ConstantField;
 import com.xing.shiro_jwt.vo.JsonResponse;
 import io.swagger.annotations.Api;

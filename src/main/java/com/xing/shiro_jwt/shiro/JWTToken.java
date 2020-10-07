@@ -1,4 +1,4 @@
-package com.xing.shiro_jwt.config;
+package com.xing.shiro_jwt.shiro;
 
 import org.apache.shiro.authc.AuthenticationToken;
 

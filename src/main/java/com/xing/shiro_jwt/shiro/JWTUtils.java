@@ -1,9 +1,11 @@
-package com.xing.shiro_jwt.util;
+package com.xing.shiro_jwt.shiro;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.xing.shiro_jwt.service.ShiroService;
+import com.xing.shiro_jwt.service.ShiroServiceImpl;
 import com.xing.shiro_jwt.vo.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -83,5 +85,7 @@ public class JWTUtils {
     }
 
     public static void main(String[] args) {
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJuYW1lIjoiYWRtaW4iLCJpZCI6ImFkbWluIiwiZXhwIjoxNjAyMDQ5MjkxfQ.NPzDRxpZ_OIIf5HaGmpTWk60o7ryZU3srdMLCDHnvXs";
+        System.out.println(verify(token, "w(VIDHjf"));
     }
 }

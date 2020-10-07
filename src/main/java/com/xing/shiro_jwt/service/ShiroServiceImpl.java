@@ -1,8 +1,7 @@
 package com.xing.shiro_jwt.service;
 
-import com.xing.shiro_jwt.config.DBRealm;
 import com.xing.shiro_jwt.dao.UserMapper;
-import com.xing.shiro_jwt.util.JWTUtils;
+import com.xing.shiro_jwt.shiro.JWTUtils;
 import com.xing.shiro_jwt.vo.ConstantField;
 import com.xing.shiro_jwt.vo.JsonResponse;
 import com.xing.shiro_jwt.vo.User;
@@ -27,7 +26,7 @@ public class ShiroServiceImpl implements ShiroService{
     UserMapper userMapper;
 
     @Autowired
-    com.xing.shiro_jwt.config.DBRealm DBRealm;
+    com.xing.shiro_jwt.shiro.DBRealm DBRealm;
 
     @Override
     public JsonResponse login(String id, String password) {

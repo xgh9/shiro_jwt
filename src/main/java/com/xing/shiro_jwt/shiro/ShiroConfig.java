@@ -1,6 +1,5 @@
-package com.xing.shiro_jwt.config;
+package com.xing.shiro_jwt.shiro;
 
-import com.xing.shiro_jwt.filter.JWTFilter;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;

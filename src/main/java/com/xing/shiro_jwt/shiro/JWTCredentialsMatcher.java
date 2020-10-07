@@ -1,6 +1,5 @@
-package com.xing.shiro_jwt.config;
+package com.xing.shiro_jwt.shiro;
 
-import com.xing.shiro_jwt.util.JWTUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;

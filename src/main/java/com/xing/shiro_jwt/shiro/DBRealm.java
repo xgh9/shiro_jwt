@@ -1,4 +1,4 @@
-package com.xing.shiro_jwt.config;
+package com.xing.shiro_jwt.shiro;
 
 import com.xing.shiro_jwt.service.ShiroService;
 import com.xing.shiro_jwt.vo.User;

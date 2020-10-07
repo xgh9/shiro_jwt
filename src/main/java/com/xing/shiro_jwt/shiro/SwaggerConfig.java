@@ -1,4 +1,4 @@
-package com.xing.shiro_jwt.config;
+package com.xing.shiro_jwt.shiro;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
