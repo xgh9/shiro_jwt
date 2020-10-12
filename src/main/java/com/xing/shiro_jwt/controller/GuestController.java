@@ -1,6 +1,6 @@
 package com.xing.shiro_jwt.controller;
 
-import com.xing.shiro_jwt.service.ShiroService;
+import com.xing.shiro_jwt.service.UserService;
 import com.xing.shiro_jwt.vo.ConstantField;
 import com.xing.shiro_jwt.vo.JsonResponse;
 import com.xing.shiro_jwt.vo.User;
@@ -27,7 +27,7 @@ public class GuestController {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    ShiroService shiroService;
+    UserService userService;
 
     /**
      *  "id":"admin","password":"123456"
@@ -47,7 +47,7 @@ public class GuestController {
         }
         //将token放入响应头
         try {
-            JsonResponse jsonResponse = shiroService.login(id,password);
+            JsonResponse jsonResponse = userService.login(id,password);
 
             String token = (String)jsonResponse.get(ConstantField.TOKEN);
             jsonResponse.remove(ConstantField.TOKEN);
@@ -72,29 +72,35 @@ public class GuestController {
         if (StringUtils.isEmpty(user.getId())){
             return JsonResponse.invalidParam("学号呢？");
         }
-        if (shiroService.checkExist(user.getId()) > 0){
+        if (userService.checkExist(user.getId()) > 0){
             return JsonResponse.invalidParam("学号" + user.getId() + "已经被别人抢先一步使用了，如果这是你的学号，快到助教这来找回账户！");
         }
         if (StringUtils.isEmpty(user.getPassword())){
             return JsonResponse.invalidParam("密码呢？");
         }
+        if (StringUtils.isEmpty(user.getClazz())){
+            return JsonResponse.invalidParam("班级呢？");
+        }
         //数据库没有管理员账号时提供注册管理员账号的方法
         if (ConstantField.ROLE_ADMIN.equals(user.getRole())){
-            if (shiroService.checkAdmin() == 0){
-                return shiroService.register(user);
+            if (userService.checkAdmin() == 0){
+                return userService.register(user);
             }else {
                 return JsonResponse.invalidParam("数据库中已有管理员账号，若丢失密码可以重新导入sql文件或手动将MD5盐值加密并hash10次的密码写入数据库！");
             }
         }
         user.setRole(ConstantField.ROLE_STUDENT);
-        return shiroService.register(user);
+        if (ConstantField.ROLE_STUDENT.equals(user.getRole()) && StringUtils.isEmpty(user.getClazz())){
+            return JsonResponse.invalidParam("请输入班级！");
+        }
+        return userService.register(user);
     }
 
     @GetMapping("/getRole")
     @ApiOperation("获取当前用户角色")
     public JsonResponse getRole(){
         try{
-            String role = shiroService.getRole();
+            String role = userService.getRole();
             JsonResponse success = JsonResponse.success();
             success.put("role",role);
             return success;

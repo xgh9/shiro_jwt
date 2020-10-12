@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import java.util.Collection;
 
 @Service
-public class ShiroServiceImpl implements ShiroService{
+public class UserServiceImpl implements UserService {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 

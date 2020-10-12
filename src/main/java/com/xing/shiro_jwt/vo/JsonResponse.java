@@ -1,7 +1,7 @@
 package com.xing.shiro_jwt.vo;
 
 import com.google.common.collect.Maps;
-import com.xing.shiro_jwt.service.ShiroService;
+import com.xing.shiro_jwt.service.UserService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +18,7 @@ public class JsonResponse extends HashMap<String,Object>{
     public static final String ERROR_CODE = "errorCode";
 
     @Resource
-    ShiroService shiroService;
+    UserService userService;
 
     public static JsonResponse staticJsonResponse;
 
@@ -27,21 +27,21 @@ public class JsonResponse extends HashMap<String,Object>{
     @PostConstruct
     public void init(){
         staticJsonResponse = this;
-        staticJsonResponse.shiroService = this.shiroService;
+        staticJsonResponse.userService = this.userService;
     }
 
     public static JsonResponse error(int code, String msg){
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,code);
         jsonResponse.put(ERROR_MSG,msg);
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
     public static JsonResponse success(){
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,0);
         jsonResponse.put(ERROR_MSG,"操作成功");
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -49,7 +49,7 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,1);
         jsonResponse.put(ERROR_MSG,"未登录");
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -57,14 +57,14 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,2);
         jsonResponse.put(ERROR_MSG,"没有权限");
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
     public static JsonResponse noAuthority(String msg){
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,2);
         jsonResponse.put(ERROR_MSG,msg);
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -72,7 +72,7 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,3);
         jsonResponse.put(ERROR_MSG,"参数错误");
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -80,7 +80,7 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,3);
         jsonResponse.put(ERROR_MSG,msg);
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -88,7 +88,7 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,4);
         jsonResponse.put(ERROR_MSG,"token认证失败");
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -96,7 +96,7 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,4);
         jsonResponse.put(ERROR_MSG,msg);
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -104,7 +104,7 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,10);
         jsonResponse.put(ERROR_MSG,"未知错误");
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 
@@ -112,7 +112,7 @@ public class JsonResponse extends HashMap<String,Object>{
         JsonResponse jsonResponse = new JsonResponse();
         jsonResponse.put(ERROR_CODE,10);
         jsonResponse.put(ERROR_MSG, msg);
-        jsonResponse.put("role",staticJsonResponse.shiroService.getRole());
+        jsonResponse.put("role",staticJsonResponse.userService.getRole());
         return jsonResponse;
     }
 }

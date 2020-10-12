@@ -1,6 +1,6 @@
 package com.xing.shiro_jwt.controller;
 
-import com.xing.shiro_jwt.service.ShiroService;
+import com.xing.shiro_jwt.service.UserService;
 import com.xing.shiro_jwt.vo.ConstantField;
 import com.xing.shiro_jwt.vo.JsonResponse;
 import io.swagger.annotations.Api;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class UserController {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    ShiroService shiroService;
+    UserService userService;
 
     @GetMapping("/logout")
     @ApiOperation("注销")
@@ -52,7 +51,7 @@ public class UserController {
         if (StringUtils.isEmpty(password)){
             return JsonResponse.invalidParam("新密码呢？");
         }
-        JsonResponse jsonResponse = shiroService.changePassowrd(oldPassword,password);
+        JsonResponse jsonResponse = userService.changePassowrd(oldPassword,password);
         return jsonResponse;
     }
 }

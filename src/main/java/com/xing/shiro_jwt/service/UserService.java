@@ -4,7 +4,7 @@ package com.xing.shiro_jwt.service;
 import com.xing.shiro_jwt.vo.JsonResponse;
 import com.xing.shiro_jwt.vo.User;
 
-public interface ShiroService {
+public interface UserService {
 
     //登录
     JsonResponse login(String id, String password);

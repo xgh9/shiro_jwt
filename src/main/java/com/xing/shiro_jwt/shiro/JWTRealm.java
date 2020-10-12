@@ -1,6 +1,6 @@
 package com.xing.shiro_jwt.shiro;
 
-import com.xing.shiro_jwt.service.ShiroService;
+import com.xing.shiro_jwt.service.UserService;
 import com.xing.shiro_jwt.vo.User;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class JWTRealm extends AuthorizingRealm {
 
     @Autowired
-    ShiroService shiroService;
+    UserService userService;
 
     /**
      * 如果subject.login(token)传过来的token不是JWTToken就跳过这个reaml，非常巧妙
@@ -52,7 +52,7 @@ public class JWTRealm extends AuthorizingRealm {
             String token = jwtToken.getToken();
             User user = JWTUtils.getClaim(token);
             if (user != null && user.getId() != null){
-                user = shiroService.getUserById(user.getId());
+                user = userService.getUserById(user.getId());
                 return new SimpleAuthenticationInfo(user.getId(),user.getSalt(),"JWTRealm");
             }
         } catch (Exception e) {

@@ -1,6 +1,6 @@
 package com.xing.shiro_jwt.shiro;
 
-import com.xing.shiro_jwt.service.ShiroService;
+import com.xing.shiro_jwt.service.UserService;
 import com.xing.shiro_jwt.vo.User;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -14,7 +14,7 @@ import org.springframework.util.ObjectUtils;
 public class DBRealm extends AuthorizingRealm {
 
     @Autowired
-    ShiroService shiroService;
+    UserService userService;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -24,7 +24,7 @@ public class DBRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         String primaryPrincipal = (String)principalCollection.getPrimaryPrincipal();
-        User user = shiroService.getUserById(primaryPrincipal);
+        User user = userService.getUserById(primaryPrincipal);
         if (!ObjectUtils.isEmpty(user)){
             SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
             simpleAuthorizationInfo.addRole(user.getRole());
@@ -36,7 +36,7 @@ public class DBRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String principal = (String) token.getPrincipal();
-        User user = shiroService.getUserById(principal);
+        User user = userService.getUserById(principal);
         if (!ObjectUtils.isEmpty(user)){
             return new SimpleAuthenticationInfo(user.getId(),user.getPassword(), ByteSource.Util.bytes(user.getSalt()),"DBRealm");
         }
