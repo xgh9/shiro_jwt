@@ -20,12 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    //登陆异常
     @ExceptionHandler(value = {org.apache.shiro.authz.UnauthenticatedException.class})
     public JsonResponse notLoginError(UnauthenticatedException e){
         log.error(e.toString());
         return JsonResponse.noLogError();
     }
 
+    //权限异常
     @ExceptionHandler(value = {AuthorizationException.class})
     public JsonResponse notAdminError(AuthorizationException e){
         log.error(e.toString());
@@ -39,7 +41,7 @@ public class GlobalExceptionHandler {
         return JsonResponse.invalidParam("登陆失败！");
     }
 
-    @ExceptionHandler(value = {Exception.class})
+//    @ExceptionHandler(value = {Exception.class})
     public JsonResponse error(HttpServletRequest request, Exception e){
         log.error(e.toString());
         return JsonResponse.error(getStatus(request).value(),e.getMessage());

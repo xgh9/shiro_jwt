@@ -48,7 +48,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login","anon");
         filterChainDefinitionMap.put("/register","anon");
 
-        filterChainDefinitionMap.put("/**", "jwt");
+//        filterChainDefinitionMap.put("/**", "jwt");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
@@ -68,11 +68,11 @@ public class ShiroConfig {
         defaultWebSecurityManager.setAuthenticator(authenticator);
 
         // 关闭Shiro自带的session
-        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
-        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
-        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
-        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
-        defaultWebSecurityManager.setSubjectDAO(subjectDAO);
+//        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+//        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+//        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
+//        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+//        defaultWebSecurityManager.setSubjectDAO(subjectDAO);
 
         //一般来说非登录请求多于登录请求，所以把JWTRealm放在前面
         defaultWebSecurityManager.setRealms(Arrays.asList(jwtRealm,dBRealm));

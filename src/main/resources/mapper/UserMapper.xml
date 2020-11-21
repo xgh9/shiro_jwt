@@ -7,14 +7,13 @@
         <result property="id" column="id" jdbcType="VARCHAR"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="password" column="password" jdbcType="VARCHAR"/>
-        <result property="clazz" column="clazz" jdbcType="VARCHAR"/>
         <result property="role" column="role" jdbcType="VARCHAR"/>
         <result property="salt" column="salt" jdbcType="VARCHAR"/>
     </resultMap>
 
     <insert id="insert" >
-        insert into users(id,name,password,clazz,role,salt)
-        values (#{id},#{name},#{password},#{clazz},#{role},#{salt})
+        insert into users(id,name,password,role,salt)
+        values (#{id},#{name},#{password},#{role},#{salt})
     </insert>
 
 
@@ -24,7 +23,7 @@
     </select>
 
     <select id="getUserById" resultMap="UserMap">
-        select id,name,password,clazz,role,salt from users
+        select id,name,password,role,salt from users
         where id = #{id}
     </select>
 
@@ -36,9 +35,6 @@
             </if>
             <if test="password != null and password != ''">
                 password = #{password},
-            </if>
-            <if test="clazz != null and clazz != ''">
-                clazz = #{clazz},
             </if>
             <if test="salt != null and salt != ''">
                 salt = #{salt},
@@ -59,4 +55,18 @@
         delete from users
         where id = #{id}
     </delete>
+
+    <select id="getAllStudents" resultMap="UserMap">
+        select id,name,role from users
+        where role = 'student'
+    </select>
+
+    <select id="getAllAdmins" resultMap="UserMap">
+        select id,name,role from users
+        where role = 'admin'
+    </select>
+
+    <select id="getAllUsers" resultMap="UserMap">
+        select id,name,role from users
+    </select>
 </mapper>

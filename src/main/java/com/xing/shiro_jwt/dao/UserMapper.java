@@ -3,6 +3,8 @@ package com.xing.shiro_jwt.dao;
 import com.xing.shiro_jwt.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
@@ -17,4 +19,10 @@ public interface UserMapper {
     Integer checkAdmin();
 
     Integer delete(String id);
+
+    List<User> getAllUsers();
+
+    List<User> getAllAdmins();
+
+    List<User> getAllStudents();
 }

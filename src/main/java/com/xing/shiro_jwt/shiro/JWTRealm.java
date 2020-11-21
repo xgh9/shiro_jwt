@@ -35,7 +35,6 @@ public class JWTRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         Object primaryPrincipal = principalCollection.getPrimaryPrincipal();
-        System.out.println(primaryPrincipal);
         return null;
     }
 

@@ -1,5 +1,6 @@
 package com.xing.shiro_jwt.service;
 
+import com.alibaba.fastjson.JSON;
 import com.xing.shiro_jwt.dao.UserMapper;
 import com.xing.shiro_jwt.shiro.JWTUtils;
 import com.xing.shiro_jwt.vo.ConstantField;
@@ -20,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -175,6 +177,30 @@ public class UserServiceImpl implements UserService {
         }
         userMapper.delete(id);
         return JsonResponse.success();
+    }
+
+    @Override
+    public JsonResponse getAllUsers() {
+        List<User> allUsers = userMapper.getAllUsers();
+        JsonResponse jsonResponse = JsonResponse.success();
+        jsonResponse.put("data", JSON.toJSON(allUsers));
+        return jsonResponse;
+    }
+
+    @Override
+    public JsonResponse getAllAdmins() {
+        List<User> allUsers = userMapper.getAllAdmins();
+        JsonResponse jsonResponse = JsonResponse.success();
+        jsonResponse.put("data", JSON.toJSON(allUsers));
+        return jsonResponse;
+    }
+
+    @Override
+    public JsonResponse getAllStudents() {
+        List<User> allUsers = userMapper.getAllStudents();
+        JsonResponse jsonResponse = JsonResponse.success();
+        jsonResponse.put("data", JSON.toJSON(allUsers));
+        return jsonResponse;
     }
 
 

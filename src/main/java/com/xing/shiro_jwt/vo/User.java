@@ -10,8 +10,6 @@ public class User {
 
     private String password;
 
-    private String clazz;
-
     private String role;
 
     private String salt;

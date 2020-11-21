@@ -4,6 +4,8 @@ package com.xing.shiro_jwt.service;
 import com.xing.shiro_jwt.vo.JsonResponse;
 import com.xing.shiro_jwt.vo.User;
 
+import java.util.List;
+
 public interface UserService {
 
     //登录
@@ -29,4 +31,10 @@ public interface UserService {
 
     //删除用户
     JsonResponse delete(String id);
+
+    JsonResponse getAllUsers();
+
+    JsonResponse getAllAdmins();
+
+    JsonResponse getAllStudents();
 }

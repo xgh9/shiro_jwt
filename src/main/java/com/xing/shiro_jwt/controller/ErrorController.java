@@ -15,7 +15,6 @@ public class ErrorController {
     @ApiOperation("未登录")
     @GetMapping(value = "/notLogin")
     public JsonResponse notLogin() {
-        System.out.println("/notLogin");
         return JsonResponse.noLogError();
     }
 
