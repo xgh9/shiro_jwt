@@ -10,13 +10,19 @@ import java.util.List;
 
 @Mapper
 public interface TaskMapper {
-    Integer insert(String name);
+    Integer addTask(Task task);
 
     Integer checkExist(String name);
+
+    Integer delete(int id);
+
+    Integer hiddenTask(int id);
 
 //    List<Submission> getSubmissionsByTaskId(int taskId);
 //
     List<Task> getAllTasks();
 
-    Integer delete(int id);
+    List<Task> getHiddenTasks();
+
+    Task getTaskById(int id);
 }

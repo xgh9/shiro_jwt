@@ -29,8 +29,11 @@ public interface UserService {
     //检查数据库中是否有管理员账户，没有管理员账户不需要管理员权限也能注册管理员账户
     Integer checkAdmin();
 
+    JsonResponse changeName(String name);
     //删除用户
     JsonResponse delete(String id);
+
+    JsonResponse batchRegister(long start, long end);
 
     JsonResponse getAllUsers();
 

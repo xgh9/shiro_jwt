@@ -4,11 +4,11 @@
 
 
     <resultMap type="com.xing.shiro_jwt.vo.User" id="UserMap">
-        <result property="id" column="id" jdbcType="VARCHAR"/>
-        <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="password" column="password" jdbcType="VARCHAR"/>
-        <result property="role" column="role" jdbcType="VARCHAR"/>
-        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+        <result property="role" column="role"/>
+        <result property="salt" column="salt"/>
     </resultMap>
 
     <insert id="insert" >
@@ -55,6 +55,13 @@
         delete from users
         where id = #{id}
     </delete>
+
+    <insert id="batchRegister" parameterType="java.util.List">
+        insert into users(id,name,password,role,salt) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.name},#{item.password},#{item.role},#{item.salt})
+        </foreach>
+    </insert>
 
     <select id="getAllStudents" resultMap="UserMap">
         select id,name,role from users

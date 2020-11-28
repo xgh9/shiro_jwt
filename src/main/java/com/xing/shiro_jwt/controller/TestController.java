@@ -35,7 +35,6 @@ public class TestController {
     @GetMapping("/testToken")
     @ApiOperation("测试token")
     public JsonResponse testToken(String token){
-
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         subject.login(new JWTToken(token));

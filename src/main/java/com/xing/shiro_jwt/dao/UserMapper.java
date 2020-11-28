@@ -20,6 +20,8 @@ public interface UserMapper {
 
     Integer delete(String id);
 
+    Integer batchRegister(List<User> users);
+
     List<User> getAllUsers();
 
     List<User> getAllAdmins();

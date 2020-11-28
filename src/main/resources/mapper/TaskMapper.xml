@@ -9,25 +9,46 @@
         <result property="count" column="count" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <insert id="insert" >
-        insert into tasks(name)
-        values (#{name})
+    <insert id="addTask" useGeneratedKeys="true" keyProperty="id">
+        insert into tasks(name, status)
+        values (#{name}, #{status})
     </insert>
 
 
     <select id="checkExist" resultType="java.lang.Integer">
         select count(id) from tasks
         where name = #{name}
-    </select>
-
-    <select id="getAllTasks" resultMap="TaskMap">
-        SELECT t.id,t.name,COUNT(s.task_id) count FROM tasks t
-        JOIN submissions  s ON t.id = s.task_id
-        GROUP BY t.id
+        and status = 1
     </select>
 
     <delete id="delete">
         delete from tasks
         where id = #{id}
     </delete>
+
+    <update id="hiddenTask">
+        update tasks
+        set status = 0
+        where id = #{id}
+    </update>
+
+    <select id="getAllTasks" resultMap="TaskMap">
+        SELECT t.id,t.name,COUNT(s.task_id) count FROM tasks t
+        JOIN submissions  s ON t.id = s.task_id
+        where status = 1
+        GROUP BY t.id
+    </select>
+
+    <select id="getHiddenTasks" resultMap="TaskMap">
+        SELECT t.id,t.name,COUNT(s.task_id) count FROM tasks t
+        JOIN submissions  s ON t.id = s.task_id
+        where status = 0
+        GROUP BY t.id
+    </select>
+
+    <select id="getTaskById" resultMap="TaskMap">
+        SELECT id,name from tasks
+        where id = #{id}
+    </select>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.xing.shiro_jwt.controller;
 
 import com.xing.shiro_jwt.service.UserService;
+import com.xing.shiro_jwt.shiro.JWTUtils;
 import com.xing.shiro_jwt.vo.ConstantField;
 import com.xing.shiro_jwt.vo.JsonResponse;
 import com.xing.shiro_jwt.vo.User;
@@ -14,11 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -50,29 +49,19 @@ public class UserController {
             return JsonResponse.invalidParam("密码呢？");
         }
         //将token放入响应头
-        try {
-            JsonResponse jsonResponse = userService.login(id,password);
+        JsonResponse jsonResponse = userService.login(id,password);
 
-            String token = (String)jsonResponse.get(ConstantField.TOKEN);
-            jsonResponse.remove(ConstantField.TOKEN);
+        String token = (String)jsonResponse.get(ConstantField.TOKEN);
+        jsonResponse.remove(ConstantField.TOKEN);
 
-            httpServletResponse.setHeader(ConstantField.TOKEN, token);
-            httpServletResponse.setHeader("Access-Control-Expose-Headers", ConstantField.TOKEN);
-            return jsonResponse;
-        } catch (Exception e) {
-            //subject.login()和httpServletResponse.setHeader需要同时执行,有异常注销
-            Subject subject = SecurityUtils.getSubject();
-
-            log.error(subject.getPrincipal() + "登录成功但生成token异常");
-
-            subject.logout();
-            return JsonResponse.unknownError("登陆失败！");
-        }
+        httpServletResponse.setHeader(ConstantField.TOKEN, token);
+        httpServletResponse.setHeader("Access-Control-Expose-Headers", ConstantField.TOKEN);
+        return jsonResponse;
     }
 
     @PostMapping("/register")
     @ApiOperation("注册")
-    public JsonResponse register(User user){
+    public JsonResponse register(@RequestBody User user){
         if (StringUtils.isEmpty(user.getId())){
             return JsonResponse.invalidParam("学号呢？");
         }
@@ -123,6 +112,13 @@ public class UserController {
         return jsonResponse;
     }
 
+    @PostMapping("/changeName")
+    @ApiOperation("修改姓名")
+    @RequiresAuthentication
+    public JsonResponse changeName(@RequestBody String name){
+        return userService.changeName(name);
+    }
+
 
     @PostMapping("/deleteUser")
     @ApiOperation("删除用户")
@@ -138,9 +134,12 @@ public class UserController {
     @PostMapping("/registerAdmin")
     @ApiOperation("注册管理员账号")
     @RequiresRoles("admin")
-    public JsonResponse registerAdmin(User user){
+    public JsonResponse registerAdmin(@RequestBody User user){
         if (StringUtils.isEmpty(user.getId())){
             return JsonResponse.invalidParam("管理员账号呢？");
+        }
+        if (StringUtils.isEmpty(user.getName())){
+            user.setName(user.getId());
         }
         if (userService.checkExist(user.getId()) > 0){
             return JsonResponse.invalidParam("帐号" + user.getId() + "已经被别人抢先一步使用了，如果这是你的学号，快到助教这来找回账户！");
@@ -151,6 +150,23 @@ public class UserController {
         user.setRole(ConstantField.ROLE_ADMIN);
         userService.register(user);
         return JsonResponse.success();
+    }
+
+    @PostMapping("/batchRegister")
+    @ApiOperation("批量注册")
+    @RequiresRoles("admin")
+    public JsonResponse batchRegister(@RequestBody Map<String, String> params) {
+        long start, end;
+        try {
+            start = Long.valueOf(params.get("start"));
+            end = Long.valueOf(params.get("end"));
+        }catch (Exception e){
+            return JsonResponse.invalidParam("参数无效！");
+        }
+        if (end < start){
+            return JsonResponse.invalidParam("参数无效！");
+        }
+        return userService.batchRegister(start,end);
     }
 
     @GetMapping("/getUsers")
@@ -173,4 +189,5 @@ public class UserController {
     public JsonResponse getStudents() {
         return userService.getAllStudents();
     }
+    
 }

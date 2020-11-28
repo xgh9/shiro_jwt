@@ -18,8 +18,8 @@ public class JWTUtils {
     private static int expireTime;
 
     @Value("${shiro.expireTime}")
-    public void setExpireTime(int expireTime){
-        JWTUtils.expireTime = expireTime;
+    public void setExpireTime(String expireTime){
+        JWTUtils.expireTime = Integer.parseInt(expireTime);
     }
 
     static char[] chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0123456789!@#$%^&*()".toCharArray();
@@ -83,7 +83,7 @@ public class JWTUtils {
     }
 
     public static void main(String[] args) {
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJuYW1lIjoiYWRtaW4iLCJpZCI6ImFkbWluIiwiZXhwIjoxNjAyMDQ5MjkxfQ.NPzDRxpZ_OIIf5HaGmpTWk60o7ryZU3srdMLCDHnvXs";
-        System.out.println(verify(token, "w(VIDHjf"));
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoic3R1ZGVudCIsIm5hbWUiOiIxNDA5MDAzMTAyOSIsImlkIjoiMTQwOTAwMzEwMjkiLCJleHAiOjE2MDYwNjAzNTl9.qYeNFxtJ2Qxzi-erXAp_a1UxcH9qsykRoi-SunxtOsY";
+        System.out.println(verify(token, "5xCSQTrN"));
     }
 }

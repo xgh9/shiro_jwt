@@ -8,8 +8,8 @@ public class Submission {
 
     private int taskId;
 
-    private String userId;
+    private String studentId;
 
-    private String userName;
+    private String name;
 
 }

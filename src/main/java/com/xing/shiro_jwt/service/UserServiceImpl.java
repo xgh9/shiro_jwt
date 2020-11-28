@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,10 +49,10 @@ public class UserServiceImpl implements UserService {
         }catch (LockedAccountException lae) {
             return JsonResponse.invalidParam("账号已锁定");
         } catch (ExcessiveAttemptsException eae) {
-            return JsonResponse.invalidParam("用户名或密码错误次数过多");
-        } catch (AuthenticationException ae) {
-            return JsonResponse.invalidParam("用户名或密码错误");
-        }
+            return JsonResponse.invalidParam("用户名或密码错误次数过多");}
+//        } catch (AuthenticationException ae) {
+//            return JsonResponse.invalidParam("用户名或密码错误");
+//        }
         if (subject.isAuthenticated()){
             User user = getUserById((String) subject.getPrincipal());
             String token = JWTUtils.sign(user);
@@ -164,6 +165,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public JsonResponse changeName(String name) {
+        Subject subject = SecurityUtils.getSubject();
+        String id = (String) subject.getPrincipal();
+        User user = getUserById(id);
+        user.setName(name);
+        userMapper.update(user);
+        return JsonResponse.success();
+    }
+
+    @Override
     public JsonResponse delete(String id) {
         if (StringUtils.isEmpty(id)){
             return JsonResponse.invalidParam();
@@ -176,6 +187,25 @@ public class UserServiceImpl implements UserService {
             return JsonResponse.noAuthority("去数据库删管理员账号吧！");
         }
         userMapper.delete(id);
+        return JsonResponse.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public JsonResponse batchRegister(long start, long end) {
+        List<User> list = new ArrayList<>();
+        for (long i = start; i <= end ; i++) {
+            User user = new User();
+            user.setId(String.valueOf(i));
+            user.setName(String.valueOf(i));
+            user.setRole(ConstantField.ROLE_STUDENT);
+            String salt = JWTUtils.getSalt(8);
+            Md5Hash newMd5Hash = new Md5Hash(String.valueOf(i), salt, 10);
+            user.setPassword(newMd5Hash.toHex());
+            user.setSalt(salt);
+            list.add(user);
+        }
+        userMapper.batchRegister(list);
         return JsonResponse.success();
     }
 
@@ -202,6 +232,4 @@ public class UserServiceImpl implements UserService {
         jsonResponse.put("data", JSON.toJSON(allUsers));
         return jsonResponse;
     }
-
-
 }
