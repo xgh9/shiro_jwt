@@ -32,16 +32,14 @@
         where id = #{id}
     </update>
 
-    <select id="getAllTasks" resultMap="TaskMap">
-        SELECT t.id,t.name,COUNT(s.task_id) count FROM tasks t
-        JOIN submissions  s ON t.id = s.task_id
+    <select id="getTasks" resultType="com.xing.shiro_jwt.vo.Task">
+        SELECT id,name,status FROM tasks t
         where status = 1
-        GROUP BY t.id
     </select>
 
     <select id="getHiddenTasks" resultMap="TaskMap">
         SELECT t.id,t.name,COUNT(s.task_id) count FROM tasks t
-        JOIN submissions  s ON t.id = s.task_id
+        left JOIN submissions  s ON t.id = s.task_id
         where status = 0
         GROUP BY t.id
     </select>

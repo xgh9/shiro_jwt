@@ -12,7 +12,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,9 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 @Service
@@ -101,8 +100,8 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public JsonResponse getAllTasks() {
-        List<Task> tasks = taskMapper.getAllTasks();
+    public JsonResponse getTasks() {
+        List<Task> tasks = taskMapper.getTasks();
         JsonResponse jsonResponse = JsonResponse.success();
         jsonResponse.put("data", JSON.toJSON(tasks));
         return jsonResponse;
@@ -164,12 +163,7 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public JsonResponse batchDownload(int taskId) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<byte[]> downloadOneTask(int taskId, String studentId) {
+    public ResponseEntity<byte[]> downloadOneTask(int taskId, String studentId) throws UnsupportedEncodingException {
         String path = submissionMapper.getSubmission(taskId, studentId);
         File file = new File(path);
         FileInputStream fis;
@@ -182,21 +176,24 @@ public class TaskServiceImpl implements TaskService{
             log.error(e.getMessage());
         }
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment;fileName=" +  path);
-        HttpStatus httpStatus = HttpStatus.OK;
+        String name = path.substring(path.lastIndexOf(File.separator)+1);
+        name = URLEncoder.encode(name, "UTF-8");
+        headers.add("Content-Disposition", "attachment; filename*=UTF-8''" + name);
 
+        HttpStatus httpStatus = HttpStatus.OK;
         ResponseEntity<byte[]> entity = new ResponseEntity<>(b, headers, httpStatus);
         return entity;
+    }
+    @Override
+    public JsonResponse batchDownload(int taskId) {
+        return null;
     }
 
     @Override
     public JsonResponse getSubmissionsByStudentId(String studentId) {
-//        List<Task> tasks = submissionMapper.getSubmissionsByStudentId(studentId);
-//        System.out.println(tasks);
+        List<Task> tasks = submissionMapper.getSubmissionsByStudentId(studentId);
         JsonResponse jsonResponse = JsonResponse.success();
-        List<Integer> list = submissionMapper.getSubmissionsByStudentId2(studentId);
-        System.out.println(list);
-//        jsonResponse.put("data",JSON.toJSON(tasks));
+        jsonResponse.put("data",JSON.toJSON(tasks));
         return jsonResponse;
     }
 
@@ -205,4 +202,5 @@ public class TaskServiceImpl implements TaskService{
 
         return null;
     }
+
 }

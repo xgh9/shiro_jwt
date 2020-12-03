@@ -43,13 +43,4 @@
         ON t.id = s.task_id
         where t.status = 1;
     </select>
-
-    <select id="getSubmissionsByStudentId2" resultType="java.lang.Integer">
---         SELECT task_id FROM tasks t
---         LEFT JOIN (SELECT * FROM submissions WHERE student_id = #{studentId})  s
---         ON t.id = s.task_id
---         where t.status = 1;
-        select task_id from submissions
-        where student_id = #{param1}
-    </select>
 </mapper>

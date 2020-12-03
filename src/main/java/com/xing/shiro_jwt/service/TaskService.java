@@ -1,9 +1,10 @@
 package com.xing.shiro_jwt.service;
 
 import com.xing.shiro_jwt.vo.JsonResponse;
-import com.xing.shiro_jwt.vo.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.UnsupportedEncodingException;
 
 public interface TaskService {
 
@@ -11,13 +12,13 @@ public interface TaskService {
 
     JsonResponse deleteTask(int taskId);
 
-    JsonResponse getAllTasks();
+    JsonResponse getTasks();
 
     JsonResponse getHiddenTasks();
 
     JsonResponse upload(int taskId, MultipartFile file);
 
-    ResponseEntity<byte[]> downloadOneTask(int taskId, String studentId);
+    ResponseEntity<byte[]> downloadOneTask(int taskId, String studentId) throws UnsupportedEncodingException;
 
     JsonResponse getSubmissionsByStudentId(String studentId);
 

@@ -26,14 +26,9 @@ CREATE TABLE `submissions` (
   `student_id` varchar(30) COLLATE utf8_bin DEFAULT NULL,
   `name` varchar(100) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 /*Data for the table `submissions` */
-
-insert  into `submissions`(`id`,`task_id`,`student_id`,`name`) values
-(1,1,'1001','1001-作业一'),
-(2,2,'1001','1001-作业二'),
-(3,1,'1002','1001-作业一');
 
 /*Table structure for table `tasks` */
 
@@ -42,15 +37,16 @@ DROP TABLE IF EXISTS `tasks`;
 CREATE TABLE `tasks` (
   `id` int(100) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `status` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 /*Data for the table `tasks` */
 
-insert  into `tasks`(`id`,`name`) values
-(1,'作业一'),
-(2,'作业二'),
-(5,'作业五');
+insert  into `tasks`(`id`,`name`,`status`) values
+(1,'作业一',1),
+(2,'作业二',1),
+(3,'作业三',1);
 
 /*Table structure for table `users` */
 

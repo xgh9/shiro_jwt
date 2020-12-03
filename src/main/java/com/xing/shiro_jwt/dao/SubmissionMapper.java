@@ -19,5 +19,4 @@ public interface SubmissionMapper {
     String getSubmission(int taskId, String studentId);
 
     List<Task> getSubmissionsByStudentId(String studentId);
-    List<Integer> getSubmissionsByStudentId2(String studentId);
 }

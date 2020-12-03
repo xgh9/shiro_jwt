@@ -20,7 +20,7 @@ public interface TaskMapper {
 
 //    List<Submission> getSubmissionsByTaskId(int taskId);
 //
-    List<Task> getAllTasks();
+    List<Task> getTasks();
 
     List<Task> getHiddenTasks();
 
