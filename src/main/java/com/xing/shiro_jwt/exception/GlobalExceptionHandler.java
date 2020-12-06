@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 
 
 /**
@@ -32,6 +33,13 @@ public class GlobalExceptionHandler {
     public JsonResponse notAdminError(AuthorizationException e){
         log.error(e.toString());
         return JsonResponse.noAuthority();
+    }
+
+    //文件下载时文件不存在异常
+    @ExceptionHandler(value = {FileNotFoundException.class})
+    public JsonResponse FileNotFoundError(FileNotFoundException e){
+        log.error(e.toString());
+        return JsonResponse.invalidParam("文件不存在!");
     }
 
     //认证异常，登录认证异常在service中处理了，过滤器Token认证异常不会到这里，应该不会被调用

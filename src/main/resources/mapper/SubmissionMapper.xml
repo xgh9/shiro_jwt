@@ -43,4 +43,17 @@
         ON t.id = s.task_id
         where t.status = 1;
     </select>
+
+    <select id="getStudentSubmissionsByTaskId" resultType="com.xing.shiro_jwt.vo.User">
+        SELECT u.id, u.name, IFNULL(s.task_id,0) AS `salt` FROM users u
+        LEFT JOIN (SELECT * FROM submissions WHERE task_id = #{taskId})  s
+        ON u.id = s.student_id
+        where u.role = 'student'
+        ORDER BY salt DESC
+    </select>
+
+    <select id="getSubmissionsByTaskId" resultType="com.xing.shiro_jwt.vo.Submission">
+        select id, task_id taskId, student_id studentId, name from submissions
+        where task_id = #{taskId}
+    </select>
 </mapper>

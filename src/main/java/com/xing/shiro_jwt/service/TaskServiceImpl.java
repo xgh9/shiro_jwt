@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xing.shiro_jwt.dao.SubmissionMapper;
 import com.xing.shiro_jwt.dao.TaskMapper;
 import com.xing.shiro_jwt.dao.UserMapper;
-import com.xing.shiro_jwt.vo.JsonResponse;
-import com.xing.shiro_jwt.vo.Submission;
-import com.xing.shiro_jwt.vo.Task;
-import com.xing.shiro_jwt.vo.User;
+import com.xing.shiro_jwt.vo.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -18,14 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -102,6 +98,19 @@ public class TaskServiceImpl implements TaskService{
     @Override
     public JsonResponse getTasks() {
         List<Task> tasks = taskMapper.getTasks();
+        List<Task> count = taskMapper.getCount();
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for (Task temp : count){
+            map.put(temp.getId(),temp.getCount());
+        }
+        System.out.println(tasks);
+        System.out.println(map);
+        for (Task temp : tasks){
+            if (map.containsKey(temp.getId())){
+                temp.setCount(map.get(temp.getId()));
+            }
+        }
+        System.out.println(tasks);
         JsonResponse jsonResponse = JsonResponse.success();
         jsonResponse.put("data", JSON.toJSON(tasks));
         return jsonResponse;
@@ -163,9 +172,15 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public ResponseEntity<byte[]> downloadOneTask(int taskId, String studentId) throws UnsupportedEncodingException {
+    public ResponseEntity<byte[]> downloadOneTask(int taskId, String studentId) throws UnsupportedEncodingException, FileNotFoundException {
         String path = submissionMapper.getSubmission(taskId, studentId);
+        if (StringUtils.isEmpty(path)){
+            throw new FileNotFoundException();
+        }
         File file = new File(path);
+        if (!file.isFile()){
+            throw new FileNotFoundException();
+        }
         FileInputStream fis;
         byte[] b = null;
         try {
@@ -184,10 +199,6 @@ public class TaskServiceImpl implements TaskService{
         ResponseEntity<byte[]> entity = new ResponseEntity<>(b, headers, httpStatus);
         return entity;
     }
-    @Override
-    public JsonResponse batchDownload(int taskId) {
-        return null;
-    }
 
     @Override
     public JsonResponse getSubmissionsByStudentId(String studentId) {
@@ -198,9 +209,38 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public JsonResponse getSubmissionsByTaskId(int taskId) {
-
-        return null;
+    public JsonResponse getStudentSubmissionsByTaskId(int taskId) {
+        List<User> users = submissionMapper.getStudentSubmissionsByTaskId(taskId);
+        JsonResponse jsonResponse = JsonResponse.success();
+        jsonResponse.put("data",JSON.toJSON(users));
+        return jsonResponse;
     }
 
+    @Override
+    public ResponseEntity<byte[]> batchDownload(int taskId) throws FileNotFoundException, UnsupportedEncodingException {
+        String path = submissonPath + taskId;
+        Task task = taskMapper.getTaskById(taskId);
+        FileOutputStream fos1 = new FileOutputStream(new File(path + ".zip"));
+        ZipUtil.toZip(path, fos1);
+        File file = new File(path + ".zip");
+        if (!file.isFile()){
+            throw new FileNotFoundException();
+        }
+        FileInputStream fis;
+        byte[] b = null;
+        try {
+            fis = new FileInputStream(file);
+            b= new byte[fis.available()];
+            fis.read(b);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+        HttpHeaders headers = new HttpHeaders();
+        String name = URLEncoder.encode(task.getName() + ".zip", "UTF-8");
+        headers.add("Content-Disposition", "attachment; filename*=UTF-8''" + name);
+
+        HttpStatus httpStatus = HttpStatus.OK;
+        ResponseEntity<byte[]> entity = new ResponseEntity<>(b, headers, httpStatus);
+        return entity;
+    }
 }

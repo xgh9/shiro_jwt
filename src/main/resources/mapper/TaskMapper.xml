@@ -33,8 +33,13 @@
     </update>
 
     <select id="getTasks" resultType="com.xing.shiro_jwt.vo.Task">
-        SELECT id,name,status FROM tasks t
-        where status = 1
+        SELECT id,name FROM tasks
+        WHERE STATUS = 1
+    </select>
+
+    <select id="getCount" resultType="com.xing.shiro_jwt.vo.Task">
+        SELECT task_id id, COUNT(id) `count` FROM submissions
+        GROUP BY task_id
     </select>
 
     <select id="getHiddenTasks" resultMap="TaskMap">
@@ -48,5 +53,7 @@
         SELECT id,name from tasks
         where id = #{id}
     </select>
+
+
 
 </mapper>

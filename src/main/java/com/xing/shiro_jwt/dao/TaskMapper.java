@@ -1,9 +1,6 @@
 package com.xing.shiro_jwt.dao;
 
-import com.xing.shiro_jwt.vo.JsonResponse;
-import com.xing.shiro_jwt.vo.Submission;
 import com.xing.shiro_jwt.vo.Task;
-import com.xing.shiro_jwt.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,9 +15,9 @@ public interface TaskMapper {
 
     Integer hiddenTask(int id);
 
-//    List<Submission> getSubmissionsByTaskId(int taskId);
-//
     List<Task> getTasks();
+
+    List<Task> getCount();
 
     List<Task> getHiddenTasks();
 
